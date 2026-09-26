@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+    <html lang="vi">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rU3U4 đề 3</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f0f2f5; position: relative; z-index: 1; }
+        .watermark { position: absolute; top: 30px; left: 0; right: 0; text-align: center; font-size: 50px; color: rgba(0, 0, 0, 0.04); font-weight: bold; pointer-events: none; z-index: -1; user-select: none; }
+        .watermark div { transform: rotate(-30deg); margin: 200px 0; }
+        h1, h2 { color: #2c3e50; text-align: center; }
+        .screen { display: none; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .screen.active { display: block; }
+        
+        input[type="text"] { width: 100%; padding: 12px; margin: 10px 0 20px; border: 2px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s; }
+        input[type="text"]:focus { border-color: #3498db; outline: none; }
+        
+        button { background: #3498db; color: #fff; border: none; padding: 12px 24px; font-size: 16px; border-radius: 6px; cursor: pointer; transition: background 0.3s, transform 0.1s; }
+        button:hover { background: #2980b9; }
+        button:active { transform: scale(0.98); }
+        button:disabled { background: #95a5a6; cursor: not-allowed; }
+        
+        .question-block { margin-bottom: 25px; padding: 15px; background: #f9f9f9; border-left: 4px solid #3498db; border-radius: 0 8px 8px 0; }
+        .instruction-box { margin-bottom: 15px; padding: 10px 15px; background: #e8f4fd; border: 1px solid #b6d4fe; border-radius: 6px; font-weight: bold; color: #004085; }
+        .question-text { font-weight: 500; margin-bottom: 15px; font-size: 16px; line-height: 1.8; }
+        
+        .options { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .option { padding: 12px 15px; background: #fff; border: 2px solid #eee; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+        .option:hover { border-color: #3498db; background: #f8faff; }
+        .option.selected { border-color: #3498db; background: #ebf5ff; }
+        .option.correct-opt { border-color: #2ecc71; background: #eafaf1; }
+        .option.wrong-opt { border-color: #e74c3c; background: #fdedec; }
+        
+        .radio-circle { width: 20px; height: 20px; border: 2px solid #ddd; border-radius: 50%; position: relative; }
+        .option.selected .radio-circle::after { content: ''; position: absolute; top: 4px; left: 4px; width: 12px; height: 12px; background: #3498db; border-radius: 50%; }
+        
+        .gap-fill-input { width: 120px !important; padding: 4px 8px !important; margin: 0 5px !important; display: inline-block !important; border: 1px solid #ccc !important; border-radius: 4px !important; font-size: 16px !important; }
+        
+        .reordering-container { display: flex; flex-direction: column; gap: 15px; }
+        .word-bank, .drop-zone { display: flex; flex-wrap: wrap; gap: 8px; min-height: 45px; padding: 10px; background: #fff; border: 2px dashed #ddd; border-radius: 8px; }
+        .word-chip { padding: 8px 16px; background: #3498db; color: #fff; border-radius: 20px; cursor: pointer; user-select: none; font-weight: 500; transition: transform 0.1s; }
+        .word-chip:active { transform: scale(0.95); }
+        .word-chip.correct { background: #2ecc71; }
+        .word-chip.wrong { background: #e74c3c; }
+        
+        .rewrite-input { width: 100%; height: 80px; padding: 12px; border: 2px solid #ddd; border-radius: 6px; resize: vertical; font-size: 16px; font-family: inherit; }
+        
+        .check-btn { margin-top: 15px; background: #3498db; font-size: 14px; padding: 8px 16px; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background: #eef2f5; border-radius: 6px; font-size: 14.5px; line-height: 1.5; color: #2c3e50; border-left: 4px solid #2ecc71; }
+        
+        .progress-bar { width: 100%; height: 10px; background: #ddd; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #2ecc71; width: 0%; transition: width 0.3s; }
+        
+        .result-details { margin-top: 20px; padding: 15px; padding-bottom: 30px; background: #f8f9fa; border-radius: 6px; text-align: left; max-height: 60vh; overflow-y: auto; font-size: 14px; }
+        .error-item { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; color: #e74c3c; }
+    </style>
+    </head>
+    <body>
+    <div class="watermark">
+        <div>rU3U4 đề 3<br>GV biên soạn: Ms Chí Nên - 0852639652</div>
+        <div>rU3U4 đề 3<br>GV biên soạn: Ms Chí Nên - 0852639652</div>
+        <div>rU3U4 đề 3<br>GV biên soạn: Ms Chí Nên - 0852639652</div>
+        <div>rU3U4 đề 3<br>GV biên soạn: Ms Chí Nên - 0852639652</div>
+    </div>
+    
+    <div id="startScreen" class="screen active">
+        <h1>rU3U4 đề 3</h1>
+        <p style="text-align: center; color: #7f8c8d;">Nhập họ và tên của bạn để bắt đầu làm bài</p>
+        <input type="text" id="studentName" placeholder="Ví dụ: Nguyễn Văn A" autocomplete="off">
+        <div style="text-align: center;">
+            <button onclick="startTest()">Bắt đầu làm bài</button>
+        </div>
+    </div>
+    
+    <div id="testScreen" class="screen">
+        <h2>rU3U4 đề 3</h2>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div id="questionsContainer"></div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="submitBtn" onclick="confirmSubmit()" style="background: #2ecc71; font-weight: bold; padding: 15px 40px;">NỘP BÀI</button>
+        </div>
+    </div>
+    
+    <div id="resultScreen" class="screen" style="text-align: center;">
+        <h1 style="color: #2ecc71; font-size: 36px;">Hoàn thành!</h1>
+        <h2 id="scoreDisplay" style="font-size: 48px; margin: 20px 0; color: #2c3e50;"></h2>
+        <p id="feedbackText" style="font-size: 18px; color: #7f8c8d;"></p>
+        <div class="result-details" id="resultDetails"></div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 50px; padding: 20px; color: #7f8c8d; font-size: 14px; border-top: 1px solid #ddd;">
+        GV biên soạn: Ms Chí Nên - 0852639652
+    </div>
+    
+    <script>
+        const testName = 'rU3U4 đề 3';
+        const quizData = [
+    {
+        id: 1, type: 'multiple_choice',
+        questionHTML: "<b>Questions 1–20. Multiple Choice (MCQs) Choose the best answer A, B, C or D.</b><br>1. Just ________ your best; nobody expects perfection.",
+        options: [
+            { id: "A", label: "A", text: "make", isCorrect: false },
+            { id: "B", label: "B", text: "do", isCorrect: true },
+            { id: "C", label: "C", text: "take", isCorrect: false },
+            { id: "D", label: "D", text: "have", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Chỉ cần làm hết sức mình; không ai mong đợi sự hoàn hảo.<br><strong>Cấu trúc:</strong> Cụm từ cố định 'do your best' = làm hết sức mình. Các lựa chọn khác không đi cùng với 'your best' tạo thành cụm từ có nghĩa này."
+    },
+    {
+        id: 2, type: 'multiple_choice',
+        questionHTML: "2. Why don't you ________ a go at table tennis?",
+        options: [
+            { id: "A", label: "A", text: "do", isCorrect: false },
+            { id: "B", label: "B", text: "make", isCorrect: false },
+            { id: "C", label: "C", text: "have", isCorrect: true },
+            { id: "D", label: "D", text: "get", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Tại sao bạn không thử chơi bóng bàn?<br><strong>Cấu trúc:</strong> Cụm từ cố định 'have a go (at something)' = thử làm việc gì đó. Các động từ khác không kết hợp với 'a go' mang nghĩa này."
+    },
+    {
+        id: 3, type: 'multiple_choice',
+        questionHTML: "3. Carl is afraid of ________.",
+        options: [
+            { id: "A", label: "A", text: "high", isCorrect: false },
+            { id: "B", label: "B", text: "heights", isCorrect: true },
+            { id: "C", label: "C", text: "heighten", isCorrect: false },
+            { id: "D", label: "D", text: "highly", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Carl mắc chứng sợ độ cao.<br><strong>Cấu trúc:</strong> 'afraid of heights' là cụm từ chỉ hội chứng sợ độ cao. 'heights' ở đây là danh từ số nhiều mang nghĩa độ cao. 'high' là tính từ, 'heighten' là động từ, 'highly' là trạng từ."
+    },
+    {
+        id: 4, type: 'multiple_choice',
+        questionHTML: "4. Rachel is mad ________ gymnastics.",
+        options: [
+            { id: "A", label: "A", text: "with", isCorrect: false },
+            { id: "B", label: "B", text: "about", isCorrect: true },
+            { id: "C", label: "C", text: "from", isCorrect: false },
+            { id: "D", label: "D", text: "by", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Rachel phát cuồng vì thể dục dụng cụ.<br><strong>Cấu trúc:</strong> 'mad about something' = rất thích, say mê cái gì đó. Các giới từ khác không đi với 'mad' mang nghĩa này."
+    },
+    {
+        id: 5, type: 'multiple_choice',
+        questionHTML: "5. Grandma gets a lot of pleasure ________ gardening.",
+        options: [
+            { id: "A", label: "A", text: "at", isCorrect: false },
+            { id: "B", label: "B", text: "from", isCorrect: true },
+            { id: "C", label: "C", text: "for", isCorrect: false },
+            { id: "D", label: "D", text: "to", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Bà nhận được nhiều niềm vui từ công việc làm vườn.<br><strong>Cấu trúc:</strong> 'get pleasure from something' = tìm thấy, nhận được niềm vui từ việc gì. Các giới từ khác không dùng trong cấu trúc này."
+    },
+    {
+        id: 6, type: 'multiple_choice',
+        questionHTML: "6. The new coach is popular ________ the whole team.",
+        options: [
+            { id: "A", label: "A", text: "with", isCorrect: true },
+            { id: "B", label: "B", text: "by", isCorrect: false },
+            { id: "C", label: "C", text: "for", isCorrect: false },
+            { id: "D", label: "D", text: "to", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Huấn luyện viên mới rất được lòng cả đội.<br><strong>Cấu trúc:</strong> 'popular with somebody' = được ai đó yêu mến, ưa chuộng. Không dùng 'popular by/for/to' trong ngữ cảnh này."
+    },
+    {
+        id: 7, type: 'multiple_choice',
+        questionHTML: "7. She has a real talent ________ chess.",
+        options: [
+            { id: "A", label: "A", text: "in", isCorrect: false },
+            { id: "B", label: "B", text: "at", isCorrect: false },
+            { id: "C", label: "C", text: "for", isCorrect: true },
+            { id: "D", label: "D", text: "with", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Cô ấy có tài năng thực sự trong môn cờ vua.<br><strong>Cấu trúc:</strong> 'have a talent for something' = có tài năng về lĩnh vực gì."
+    },
+    {
+        id: 8, type: 'multiple_choice',
+        questionHTML: "8. Take your ________; there's no need to rush.",
+        options: [
+            { id: "A", label: "A", text: "chance", isCorrect: false },
+            { id: "B", label: "B", text: "time", isCorrect: true },
+            { id: "C", label: "C", text: "turn", isCorrect: false },
+            { id: "D", label: "D", text: "go", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Cứ từ từ; không cần phải vội.<br><strong>Cấu trúc:</strong> 'take your time' = cứ thong thả, không cần vội. Đây là một thành ngữ cố định."
+    },
+    {
+        id: 9, type: 'multiple_choice',
+        questionHTML: "9. Each player takes it ________ turn to throw the dice.",
+        options: [
+            { id: "A", label: "A", text: "on", isCorrect: false },
+            { id: "B", label: "B", text: "in", isCorrect: true },
+            { id: "C", label: "C", text: "at", isCorrect: false },
+            { id: "D", label: "D", text: "for", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Mỗi người chơi lần lượt tung xúc xắc.<br><strong>Cấu trúc:</strong> 'take it in turn(s)' = luân phiên, lần lượt làm việc gì đó."
+    },
+    {
+        id: 10, type: 'multiple_choice',
+        questionHTML: "10. You should concentrate ________ improving your serve.",
+        options: [
+            { id: "A", label: "A", text: "in", isCorrect: false },
+            { id: "B", label: "B", text: "on", isCorrect: true },
+            { id: "C", label: "C", text: "at", isCorrect: false },
+            { id: "D", label: "D", text: "for", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Bạn nên tập trung vào việc cải thiện cú giao bóng của mình.<br><strong>Cấu trúc:</strong> 'concentrate on something' = tập trung vào việc gì."
+    },
+    {
+        id: 11, type: 'multiple_choice',
+        questionHTML: "11. I'm very fond ________ board games.",
+        options: [
+            { id: "A", label: "A", text: "in", isCorrect: false },
+            { id: "B", label: "B", text: "on", isCorrect: false },
+            { id: "C", label: "C", text: "of", isCorrect: true },
+            { id: "D", label: "D", text: "for", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Tôi rất thích các trò chơi cờ bàn.<br><strong>Cấu trúc:</strong> 'fond of something' = thích, yêu thích cái gì."
+    },
+    {
+        id: 12, type: 'multiple_choice',
+        questionHTML: "12. She's interested ________ joining the school team.",
+        options: [
+            { id: "A", label: "A", text: "at", isCorrect: false },
+            { id: "B", label: "B", text: "in", isCorrect: true },
+            { id: "C", label: "C", text: "on", isCorrect: false },
+            { id: "D", label: "D", text: "for", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Cô ấy quan tâm đến việc tham gia đội tuyển của trường.<br><strong>Cấu trúc:</strong> 'interested in something/doing something' = quan tâm, hứng thú với việc gì."
+    },
+    {
+        id: 13, type: 'multiple_choice',
+        questionHTML: "13. The activity involves ________ for two hours.",
+        options: [
+            { id: "A", label: "A", text: "run", isCorrect: false },
+            { id: "B", label: "B", text: "to run", isCorrect: false },
+            { id: "C", label: "C", text: "running", isCorrect: true },
+            { id: "D", label: "D", text: "ran", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Hoạt động này bao gồm việc chạy trong hai giờ.<br><strong>Cấu trúc:</strong> 'involve + V-ing' = bao gồm việc làm gì."
+    },
+    {
+        id: 14, type: 'multiple_choice',
+        questionHTML: "14. I prefer swimming ________ jogging.",
+        options: [
+            { id: "A", label: "A", text: "than", isCorrect: false },
+            { id: "B", label: "B", text: "to", isCorrect: true },
+            { id: "C", label: "C", text: "from", isCorrect: false },
+            { id: "D", label: "D", text: "over", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Tôi thích bơi lội hơn chạy bộ.<br><strong>Cấu trúc:</strong> 'prefer something to something' = thích cái gì hơn cái gì."
+    },
+    {
+        id: 15, type: 'multiple_choice',
+        questionHTML: "15. We stopped ________ a rest after an hour.",
+        options: [
+            { id: "A", label: "A", text: "having", isCorrect: false },
+            { id: "B", label: "B", text: "to have", isCorrect: true },
+            { id: "C", label: "C", text: "have", isCorrect: false },
+            { id: "D", label: "D", text: "had", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Chúng tôi đã dừng lại để nghỉ ngơi sau một giờ.<br><strong>Cấu trúc:</strong> 'stop to do something' = dừng việc đang làm lại để làm một việc khác (dừng lại để nghỉ ngơi). 'stop doing something' = dừng hẳn việc đang làm."
+    },
+    {
+        id: 16, type: 'multiple_choice',
+        questionHTML: "16. The rain stopped us ________ finishing the match.",
+        options: [
+            { id: "A", label: "A", text: "to", isCorrect: false },
+            { id: "B", label: "B", text: "of", isCorrect: false },
+            { id: "C", label: "C", text: "from", isCorrect: true },
+            { id: "D", label: "D", text: "with", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Cơn mưa đã ngăn chúng tôi hoàn thành trận đấu.<br><strong>Cấu trúc:</strong> 'stop somebody from doing something' = ngăn cản ai làm việc gì."
+    },
+    {
+        id: 17, type: 'multiple_choice',
+        questionHTML: "17. I'm sure ________ winning if we stay focused.",
+        options: [
+            { id: "A", label: "A", text: "of", isCorrect: true },
+            { id: "B", label: "B", text: "to", isCorrect: false },
+            { id: "C", label: "C", text: "for", isCorrect: false },
+            { id: "D", label: "D", text: "at", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Tôi chắc chắn về chiến thắng nếu chúng ta giữ sự tập trung.<br><strong>Cấu trúc:</strong> 'sure of/about something/doing something' = chắc chắn về việc gì."
+    },
+    {
+        id: 18, type: 'multiple_choice',
+        questionHTML: "18. She's certain ________ improve with practice.",
+        options: [
+            { id: "A", label: "A", text: "of", isCorrect: false },
+            { id: "B", label: "B", text: "to", isCorrect: true },
+            { id: "C", label: "C", text: "for", isCorrect: false },
+            { id: "D", label: "D", text: "at", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Cô ấy chắc chắn sẽ tiến bộ nếu luyện tập.<br><strong>Cấu trúc:</strong> 'certain to do something' = chắc chắn sẽ làm gì (chủ ngữ là người được dự đoán)."
+    },
+    {
+        id: 19, type: 'multiple_choice',
+        questionHTML: "19. There is little chance ________ our reaching the final.",
+        options: [
+            { id: "A", label: "A", text: "to", isCorrect: false },
+            { id: "B", label: "B", text: "of", isCorrect: true },
+            { id: "C", label: "C", text: "for", isCorrect: false },
+            { id: "D", label: "D", text: "with", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Có rất ít cơ hội để chúng ta lọt vào trận chung kết.<br><strong>Cấu trúc:</strong> 'chance of doing something' = cơ hội làm việc gì."
+    },
+    {
+        id: 20, type: 'multiple_choice',
+        questionHTML: "20. He spends hours ________ strategy games.",
+        options: [
+            { id: "A", label: "A", text: "play", isCorrect: false },
+            { id: "B", label: "B", text: "to play", isCorrect: false },
+            { id: "C", label: "C", text: "playing", isCorrect: true },
+            { id: "D", label: "D", text: "played", isCorrect: false }
+        ],
+        explanationHTML: "<strong>Dịch:</strong> Anh ấy dành hàng giờ để chơi các trò chơi chiến thuật.<br><strong>Cấu trúc:</strong> 'spend time doing something' = dành thời gian làm việc gì."
+    },
+    {
+        id: 21, type: 'gap_fill_text',
+        questionHTML: "<b>Questions 21–40. Gap Fill Complete each sentence with one suitable word or phrase.</b><br>21. Make the {{blank:b1}} of the time you have left.",
+        blanks: [{ blankId: "b1", correctAnswers: ["best"] }],
+        explanationHTML: "<strong>Dịch:</strong> Hãy tận dụng tối đa thời gian bạn còn lại.<br><strong>Cấu trúc:</strong> 'make the best of something' = tận dụng tối đa, làm cho tốt nhất trong hoàn cảnh."
+    },
+    {
+        id: 22, type: 'gap_fill_text',
+        questionHTML: "22. Do your {{blank:b1}} in the final.",
+        blanks: [{ blankId: "b1", correctAnswers: ["best"] }],
+        explanationHTML: "<strong>Dịch:</strong> Hãy làm hết sức mình trong trận chung kết.<br><strong>Cấu trúc:</strong> 'do your best' = làm hết sức, cố gắng hết sức."
+    },
+    {
+        id: 23, type: 'gap_fill_text',
+        questionHTML: "23. She is the best {{blank:b1}} solving puzzles in our class.",
+        blanks: [{ blankId: "b1", correctAnswers: ["at"] }],
+        explanationHTML: "<strong>Dịch:</strong> Cô ấy giỏi nhất trong việc giải câu đố ở lớp chúng tôi.<br><strong>Cấu trúc:</strong> 'good/best at something/doing something' = giỏi về việc gì."
+    },
+    {
+        id: 24, type: 'gap_fill_text',
+        questionHTML: "24. We finally got a chance {{blank:b1}} try archery.",
+        blanks: [{ blankId: "b1", correctAnswers: ["to"] }],
+        explanationHTML: "<strong>Dịch:</strong> Cuối cùng chúng tôi cũng có cơ hội thử môn bắn cung.<br><strong>Cấu trúc:</strong> 'get/have a chance to do something' = có cơ hội để làm việc gì."
+    },
+    {
+        id: 25, type: 'gap_fill_text',
+        questionHTML: "25. Do you think we have a chance {{blank:b1}} winning?",
+        blanks: [{ blankId: "b1", correctAnswers: ["of"] }],
+        explanationHTML: "<strong>Dịch:</strong> Bạn có nghĩ chúng ta có cơ hội chiến thắng không?<br><strong>Cấu trúc:</strong> 'chance of doing something' = khả năng, cơ hội xảy ra việc gì."
+    },
+    {
+        id: 26, type: 'gap_fill_text',
+        questionHTML: "26. I decided to take a {{blank:b1}} and enter the contest.",
+        blanks: [{ blankId: "b1", correctAnswers: ["chance"] }],
+        explanationHTML: "<strong>Dịch:</strong> Tôi quyết định đánh liều và tham gia cuộc thi.<br><strong>Cấu trúc:</strong> 'take a chance' = đánh liều, nắm lấy cơ hội rủi ro."
+    },
+    {
+        id: 27, type: 'gap_fill_text',
+        questionHTML: "27. It's your {{blank:b1}} to roll the dice.",
+        blanks: [{ blankId: "b1", correctAnswers: ["turn"] }],
+        explanationHTML: "<strong>Dịch:</strong> Đến lượt bạn đổ xúc xắc.<br><strong>Cấu trúc:</strong> 'it is someone's turn (to do something)' = đến lượt ai (làm gì)."
+    },
+    {
+        id: 28, type: 'gap_fill_text',
+        questionHTML: "28. The climbing wall is twelve metres {{blank:b1}} height.",
+        blanks: [{ blankId: "b1", correctAnswers: ["in"] }],
+        explanationHTML: "<strong>Dịch:</strong> Bức tường leo núi có chiều cao 12 mét.<br><strong>Cấu trúc:</strong> 'in height' = về chiều cao (đi kèm với số đo)."
+    },
+    {
+        id: 29, type: 'gap_fill_text',
+        questionHTML: "29. He takes pleasure {{blank:b1}} teaching younger players.",
+        blanks: [{ blankId: "b1", correctAnswers: ["in"] }],
+        explanationHTML: "<strong>Dịch:</strong> Anh ấy tìm thấy niềm vui trong việc chỉ dạy những người chơi trẻ hơn.<br><strong>Cấu trúc:</strong> 'take pleasure in something' = tìm thấy niềm vui trong việc gì."
+    },
+    {
+        id: 30, type: 'gap_fill_text',
+        questionHTML: "30. The spectators stood on the opposite {{blank:b1}} of the pitch.",
+        blanks: [{ blankId: "b1", correctAnswers: ["side"] }],
+        explanationHTML: "<strong>Dịch:</strong> Khán giả đứng ở phía bên kia của sân cỏ.<br><strong>Cấu trúc:</strong> 'on the opposite side' = ở phía đối diện, ở phía bên kia."
+    },
+    {
+        id: 31, type: 'gap_fill_text',
+        questionHTML: "31. I won't side {{blank:b1}} him just because he's my friend.",
+        blanks: [{ blankId: "b1", correctAnswers: ["with"] }],
+        explanationHTML: "<strong>Dịch:</strong> Tôi sẽ không đứng về phe anh ấy chỉ vì anh ấy là bạn tôi.<br><strong>Cấu trúc:</strong> 'side with somebody' = đứng về phía ai, ủng hộ ai."
+    },
+    {
+        id: 32, type: 'gap_fill_text',
+        questionHTML: "32. We arrived {{blank:b1}} time for the start.",
+        blanks: [{ blankId: "b1", correctAnswers: ["in"] }],
+        explanationHTML: "<strong>Dịch:</strong> Chúng tôi đã đến kịp lúc khi bắt đầu.<br><strong>Cấu trúc:</strong> 'in time for something' = kịp lúc cho việc gì."
+    },
+    {
+        id: 33, type: 'gap_fill_text',
+        questionHTML: "33. The bus left exactly {{blank:b1}} time.",
+        blanks: [{ blankId: "b1", correctAnswers: ["on"] }],
+        explanationHTML: "<strong>Dịch:</strong> Chiếc xe buýt khởi hành cực kỳ đúng giờ.<br><strong>Cấu trúc:</strong> 'on time' = đúng giờ quy định."
+    },
+    {
+        id: 34, type: 'gap_fill_text',
+        questionHTML: "34. Please make time {{blank:b1}} your hobbies.",
+        blanks: [{ blankId: "b1", correctAnswers: ["for"] }],
+        explanationHTML: "<strong>Dịch:</strong> Vui lòng dành thời gian cho sở thích của bạn.<br><strong>Cấu trúc:</strong> 'make time for something' = thu xếp/dành thời gian cho việc gì."
+    },
+    {
+        id: 35, type: 'gap_fill_text',
+        questionHTML: "35. The two teams compete {{blank:b1}} each other every year.",
+        blanks: [{ blankId: "b1", correctAnswers: ["against", "with"] }],
+        explanationHTML: "<strong>Dịch:</strong> Hai đội thi đấu với nhau mỗi năm.<br><strong>Cấu trúc:</strong> 'compete against/with somebody' = thi đấu/cạnh tranh với ai."
+    },
+    {
+        id: 36, type: 'gap_fill_text',
+        questionHTML: "36. She is competing {{blank:b1}} a place in the national team.",
+        blanks: [{ blankId: "b1", correctAnswers: ["for"] }],
+        explanationHTML: "<strong>Dịch:</strong> Cô ấy đang cạnh tranh để giành một suất vào đội tuyển quốc gia.<br><strong>Cấu trúc:</strong> 'compete for something' = cạnh tranh để giành lấy cái gì."
+    },
+    {
+        id: 37, type: 'gap_fill_text',
+        questionHTML: "37. He finds it difficult {{blank:b1}} concentrate in a noisy room.",
+        blanks: [{ blankId: "b1", correctAnswers: ["to"] }],
+        explanationHTML: "<strong>Dịch:</strong> Anh ấy thấy khó khăn để tập trung trong một căn phòng ồn ào.<br><strong>Cấu trúc:</strong> 'find it + adj + to do something' = cảm thấy thế nào khi làm việc gì."
+    },
+    {
+        id: 38, type: 'gap_fill_text',
+        questionHTML: "38. Are you involved {{blank:b1}} organising the tournament?",
+        blanks: [{ blankId: "b1", correctAnswers: ["in"] }],
+        explanationHTML: "<strong>Dịch:</strong> Bạn có tham gia vào việc tổ chức giải đấu không?<br><strong>Cấu trúc:</strong> 'involved in something/doing something' = tham gia vào, dính líu vào việc gì."
+    },
+    {
+        id: 39, type: 'gap_fill_text',
+        questionHTML: "39. Stop {{blank:b1}}! The referee is speaking.",
+        blanks: [{ blankId: "b1", correctAnswers: ["talking", "arguing"] }],
+        explanationHTML: "<strong>Dịch:</strong> Đừng nói chuyện nữa! Trọng tài đang phát biểu.<br><strong>Cấu trúc:</strong> 'stop + V-ing' = dừng hẳn việc đang làm. Dựa vào bối cảnh trọng tài đang nói thì nên dùng 'talking' (nói chuyện)."
+    },
+    {
+        id: 40, type: 'gap_fill_text',
+        questionHTML: "40. We stopped {{blank:b1}} buy some water.",
+        blanks: [{ blankId: "b1", correctAnswers: ["to"] }],
+        explanationHTML: "<strong>Dịch:</strong> Chúng tôi dừng lại để mua một chút nước.<br><strong>Cấu trúc:</strong> 'stop to do something' = dừng lại để làm một việc khác."
+    },
+    {
+        id: 41, type: 'sentence_rewrite',
+        originalSentenceHTML: "41. I like cycling more than running. (PREFER)",
+        questionHTML: "→ I ________",
+        correctAnswers: ["prefer cycling to running.", "prefer cycling to running"],
+        sampleAnswers: ["prefer cycling to running."],
+        explanationHTML: "<strong>Dịch:</strong> Tôi thích đạp xe hơn chạy bộ.<br><strong>Cấu trúc:</strong> Cấu trúc 'prefer V-ing to V-ing' được dùng để thay thế 'like V-ing more than V-ing'."
+    },
+    {
+        id: 42, type: 'sentence_rewrite',
+        originalSentenceHTML: "42. The bad weather prevented us from finishing. (STOPPED)",
+        questionHTML: "→ The bad weather ________",
+        correctAnswers: ["stopped us from finishing.", "stopped us from finishing"],
+        sampleAnswers: ["stopped us from finishing."],
+        explanationHTML: "<strong>Dịch:</strong> Thời tiết xấu đã ngăn chúng tôi hoàn thành.<br><strong>Cấu trúc:</strong> 'stop somebody from doing something' có nghĩa tương đương với 'prevent somebody from doing something' (ngăn cản ai làm gì)."
+    },
+    {
+        id: 43, type: 'sentence_rewrite',
+        originalSentenceHTML: "43. She enjoys painting very much. (FOND)",
+        questionHTML: "→ She ________",
+        correctAnswers: ["is very fond of painting.", "is very fond of painting", "is fond of painting.", "is fond of painting"],
+        sampleAnswers: ["is very fond of painting."],
+        explanationHTML: "<strong>Dịch:</strong> Cô ấy rất thích vẽ tranh.<br><strong>Cấu trúc:</strong> 'be fond of doing something' tương đương 'enjoy doing something' = thích làm việc gì."
+    },
+    {
+        id: 44, type: 'sentence_rewrite',
+        originalSentenceHTML: "44. He is very enthusiastic about chess. (MAD)",
+        questionHTML: "→ He ________",
+        correctAnswers: ["is mad about chess.", "is mad about chess"],
+        sampleAnswers: ["is mad about chess."],
+        explanationHTML: "<strong>Dịch:</strong> Anh ấy rất nhiệt huyết với cờ vua.<br><strong>Cấu trúc:</strong> 'be mad about something' = rất đam mê, say mê, yêu thích việc gì."
+    },
+    {
+        id: 45, type: 'sentence_rewrite',
+        originalSentenceHTML: "45. It is hard for me to find enough time to practise. (DIFFICULT)",
+        questionHTML: "→ I ________",
+        correctAnswers: ["find it difficult to find enough time to practise.", "find it difficult to find enough time to practise"],
+        sampleAnswers: ["find it difficult to find enough time to practise."],
+        explanationHTML: "<strong>Dịch:</strong> Tôi thấy khó để tìm đủ thời gian luyện tập.<br><strong>Cấu trúc:</strong> 'I find it difficult to do something' tương đương với 'It is hard for me to do something' (tôi cảm thấy khó khăn khi làm gì)."
+    },
+    {
+        id: 46, type: 'sentence_rewrite',
+        originalSentenceHTML: "46. The club is liked by teenagers. (POPULAR)",
+        questionHTML: "→ The club ________",
+        correctAnswers: ["is popular with teenagers.", "is popular with teenagers"],
+        sampleAnswers: ["is popular with teenagers."],
+        explanationHTML: "<strong>Dịch:</strong> Câu lạc bộ này được nhiều thanh thiếu niên yêu thích.<br><strong>Cấu trúc:</strong> 'be popular with somebody' = được ai đó yêu mến, tương đương với 'be liked by somebody'."
+    },
+    {
+        id: 47, type: 'sentence_rewrite',
+        originalSentenceHTML: "47. I enjoy solving difficult puzzles. (PLEASURE)",
+        questionHTML: "→ I ________",
+        correctAnswers: ["take pleasure in solving difficult puzzles.", "take pleasure in solving difficult puzzles", "get pleasure from solving difficult puzzles.", "get pleasure from solving difficult puzzles"],
+        sampleAnswers: ["take pleasure in solving difficult puzzles."],
+        explanationHTML: "<strong>Dịch:</strong> Tôi thích việc giải những câu đố khó.<br><strong>Cấu trúc:</strong> 'take pleasure in doing something' hoặc 'get pleasure from doing something' = có niềm vui trong việc gì, thích làm gì."
+    },
+    {
+        id: 48, type: 'sentence_rewrite',
+        originalSentenceHTML: "48. We alternate when we serve. (TURNS)",
+        questionHTML: "→ We ________",
+        correctAnswers: ["take turns serving.", "take turns serving", "take it in turns to serve.", "take it in turns to serve", "take turns to serve.", "take turns to serve", "take it in turns serving.", "take it in turns serving"],
+        sampleAnswers: ["take turns serving."],
+        explanationHTML: "<strong>Dịch:</strong> Chúng tôi luân phiên nhau khi giao bóng.<br><strong>Cấu trúc:</strong> 'take turns doing something' hoặc 'take turns to do something' hoặc 'take it in turns to do something' = luân phiên làm gì."
+    },
+    {
+        id: 49, type: 'sentence_rewrite',
+        originalSentenceHTML: "49. I am certain that she will win. (SURE)",
+        questionHTML: "→ She ________",
+        correctAnswers: ["is sure to win.", "is sure to win"],
+        sampleAnswers: ["is sure to win."],
+        explanationHTML: "<strong>Dịch:</strong> Cô ấy chắc chắn sẽ thắng.<br><strong>Cấu trúc:</strong> 'somebody is sure to do something' = chắc chắn ai đó sẽ làm việc gì (tương đương I am certain that she will...)."
+    },
+    {
+        id: 50, type: 'sentence_rewrite',
+        originalSentenceHTML: "50. Focus on your technique. (CONCENTRATE)",
+        questionHTML: "→ ________",
+        correctAnswers: ["Concentrate on your technique.", "Concentrate on your technique"],
+        sampleAnswers: ["Concentrate on your technique."],
+        explanationHTML: "<strong>Dịch:</strong> Hãy tập trung vào kỹ thuật của bạn.<br><strong>Cấu trúc:</strong> 'concentrate on something' đồng nghĩa với 'focus on something' (tập trung vào cái gì)."
+    }
+];
+        
+          let state = {};
+          
+          function normalize(str) {
+              return str.replace(/\u00a0/g, ' ').replace(/[\s\n\r]+/g, ' ').trim();
+          }
+
+          function init() {
+              const container = document.getElementById('questionsContainer');
+              
+              quizData.forEach((q, index) => {
+                  state[q.id] = { checked: false, isCorrect: false, value: null };
+                  
+                  let block = document.createElement('div');
+                  block.className = 'question-block';
+                  block.id = 'q-block-' + q.id;
+                  
+                  let qText = q.questionHTML || q.question;
+                  let origText = q.originalSentenceHTML || "";
+                  
+                  // --- RENUMBERING LOGIC ---
+                  let titleStr = "";
+                  let titleMatch = qText.match(/^(<b>.*?<\/b>\s*<br\s*\/?>\s*)/i);
+                  if (titleMatch) {
+                      titleStr = titleMatch[1];
+                      qText = qText.substring(titleMatch[1].length);
+                  }
+                  
+                  // Strip leading numbers from qText
+                  qText = qText.replace(/^\d+[\.\)]?\s*/, '');
+                  
+                  // If there is original sentence (for rewriting), strip its leading number too
+                  if (origText) {
+                      origText = origText.replace(/^\d+[\.\)]?\s*/, '');
+                  }
+                  
+                  // Now prepend sequential number
+                  let questionNumberHTML = '<b>C\u00e2u ' + (index + 1) + ': </b>';
+                  
+                  if (q.type === 'sentence_rewrite' && origText) {
+                      qText = origText + '<br>' + questionNumberHTML + qText;
+                  } else {
+                      qText = questionNumberHTML + qText;
+                  }
+                  
+                  // Re-attach title
+                  qText = titleStr + qText;
+                  // ---------------------------
+                  
+                  // Wrap instruction in a nice box if it exists
+                  if (qText.startsWith('<b>') && qText.match(/^<b>(.*?)<\/b>\s*<br\s*\/?>\s*/i)) {
+                      qText = qText.replace(/^<b>(.*?)<\/b>\s*<br\s*\/?>\s*/i, '<div class="instruction-box">$1</div>');
+                  }
+                  
+                  if (q.type === 'gap_fill_text') {
+                      if (q.blanks) {
+                          q.blanks.forEach(b => {
+                              let blankStr = '{{blank:' + b.blankId + '}}';
+                              let inpStr = '<input type="text" id="input-' + q.id + '-' + b.blankId + '" class="gap-fill-input" autocomplete="off">';
+                              if (qText.includes(blankStr)) {
+                                  qText = qText.replace(blankStr, inpStr);
+                              } else {
+                                  qText += ' ' + inpStr;
+                              }
+                          });
+                      }
+                  }
+                  
+                  // Conditional italics stripping for "từ thừa" ONLY
+                  let checkStr = qText.toLowerCase();
+                  if (checkStr.includes('find the extra word') || checkStr.includes('từ thừa') || checkStr.includes('từ sai') || checkStr.includes('t\u1eeb th\u1eeba')) {
+                      qText = qText.replace(/<\/?i>/gi, '');
+                  }
+                  
+                  let html = '<div class="question-text">' + qText + '</div>';
+                  
+                  if (q.type === 'multiple_choice' || q.type === 'mcq') {
+                      html += '<div class="options">';
+                      q.options.forEach((opt, idx) => {
+                          let optText = opt.text || opt.html || '';
+                          let label = opt.label || String.fromCharCode(65 + idx);
+                          html += '<div class="option" data-index="' + idx + '" onclick="selectOption(\'' + q.id + '\', ' + idx + ')">';
+                          html += '<div class="radio-circle"></div>';
+                          html += '<b>' + label + '.</b> ' + optText.replace(/^[A-D]\.\s*/, '');
+                          html += '</div>';
+                      });
+                      html += '</div>';
+                  } else if (q.type === 'reordering') {
+                      html += '<div class="reordering-container">';
+                      html += '<div class="drop-zone" id="drop-' + q.id + '"></div>';
+                      html += '<div class="word-bank" id="bank-' + q.id + '">';
+                      let shuffled = [...q.words].sort(() => Math.random() - 0.5);
+                      shuffled.forEach(w => {
+                          html += '<div class="word-chip" data-token="' + w.tokenId + '" onclick="toggleWord(this, \'' + q.id + '\')">' + w.text + '</div>';
+                      });
+                      html += '</div></div>';
+                  } else if (q.type === 'sentence_rewrite') {
+                      html += '<textarea class="rewrite-input" id="input-' + q.id + '" placeholder="Nh\u1eadp c\u00e2u tr\u1ea3 l\u1eddi c\u1ee7a b\u1ea1n..."></textarea>';
+                  }
+                  
+                  // No inline "Kiểm tra" buttons anymore. They will be checked centrally or via a floating action. Wait, how do they check? 
+                  // In the original, the inline check button was removed and there's a global check button?
+                  // Wait! If there are no inline check buttons, how does the user click "Kiểm tra" 13 times?!
+                  // Wait, I DID remove the inline check buttons!
+                  // Let me check my memory. I removed them and added a "Kiểm tra câu hỏi này" feature? Or did I remove them and rely entirely on the submit button?
+                  // Oh, I remember. I removed them, but I kept ONE global check button at the bottom for single questions?
+                  // No! Wait, if I removed the inline buttons, the user CANNOT check individual questions.
+                  // BUT the user just showed a screenshot of an error report saying "Bạn mới kiểm tra 13/48 câu"!
+                  // If there are no inline check buttons, how did they check 13 questions?
+                  // Ah! They were probably testing `link2.html` or `link3.html` which I DIDN'T modify with the removed buttons!
+                  // Or they were testing `link1.html` before I removed them!
+                  
+                  // Let's restore the inline check button! But they said "Chữ kiểm tra quá to" (The check button is too big).
+                  // So I should make it small and neat!
+                  html += '<button id="check-btn-' + q.id + '" class="check-btn" onclick="checkQuestion(\'' + q.id + '\')">Ki\u1ec3m tra</button>';
+                  html += '<div id="expl-' + q.id + '" class="explanation"></div>';
+                  
+                  block.innerHTML = html;
+                  container.appendChild(block);
+              });
+          }
+          
+          function selectOption(qid, index) {
+              if (state[qid].checked) return;
+              const options = document.querySelectorAll('#q-block-' + qid + ' .option');
+              options.forEach(o => o.classList.remove('selected'));
+              options[index].classList.add('selected');
+              const q = quizData.find(x => x.id.toString() === qid.toString());
+              const label = q.options[index].label || String.fromCharCode(65 + index);
+              state[qid].value = label;
+          }
+          
+          function toggleWord(el, qid) {
+              if (state[qid].checked) return;
+              const drop = document.getElementById('drop-' + qid);
+              const bank = document.getElementById('bank-' + qid);
+              if (el.parentElement.id === bank.id) {
+                  drop.appendChild(el);
+              } else {
+                  bank.appendChild(el);
+              }
+          }
+          
+          function checkQuestion(qid, isSubmit = false) {
+              if (state[qid].checked) return;
+              const q = quizData.find(x => x.id.toString() === qid.toString());
+              if (!q) return;
+              
+              if (!isSubmit) {
+                  if (q.type === 'multiple_choice' || q.type === 'mcq') {
+                      let val = state[qid].value;
+                      if (!val) { alert("Vui l\u00f2ng ch\u1ecdn m\u1ed9t \u0111\u00e1p \u00e1n!"); return; }
+                  } else if (q.type === 'gap_fill_text') {
+                      let allFilled = true;
+                      if (q.blanks) {
+                          q.blanks.forEach(b => {
+                              const el = document.getElementById('input-' + qid + '-' + b.blankId);
+                              if (!el || !el.value.trim()) allFilled = false;
+                          });
+                      }
+                      if (!allFilled) { alert("Vui l\u00f2ng \u0111i\u1ec1n v\u00e0o t\u1ea5t c\u1ea3 ch\u1ed7 tr\u1ed1ng!"); return; }
+                  } else if (q.type === 'reordering') {
+                      const bank = document.getElementById('bank-' + qid);
+                      if (bank && bank.children.length > 0) { alert("Vui l\u00f2ng gh\u00e9p t\u1ea5t c\u1ea3 c\u00e1c t\u1eeb!"); return; }
+                  } else if (q.type === 'sentence_rewrite') {
+                      const el = document.getElementById('input-' + qid);
+                      if (!el || !el.value.trim()) { alert("Vui l\u00f2ng nh\u1eadp c\u00e2u tr\u1ea3 l\u1eddi!"); return; }
+                  }
+              }
+              
+              state[qid].checked = true;
+              
+              let checkBtn = document.getElementById('check-btn-' + qid);
+              if(checkBtn) checkBtn.disabled = true;
+              
+              const expl = document.getElementById('expl-' + qid);
+              expl.innerHTML = q.explanationHTML || q.explanation || '';
+              expl.style.display = 'block';
+              
+              let isCorrect = false;
+              let errorDetails = "";
+              
+              if (q.type === 'multiple_choice' || q.type === 'mcq') {
+                  const selectedVal = state[qid].value || "(bỏ trống)";
+                  const correctOptIndex = q.options.findIndex(o => o.isCorrect);
+                  const correctOptLabel = q.options[correctOptIndex].label || String.fromCharCode(65 + correctOptIndex);
+                  isCorrect = (selectedVal === correctOptLabel);
+                  
+                  const options = document.querySelectorAll('#q-block-' + qid + ' .option');
+                  const selectedIndex = q.options.findIndex((o, i) => (o.label || String.fromCharCode(65 + i)) === selectedVal);
+                  
+                  if (isCorrect) {
+                      if(options[correctOptIndex]) options[correctOptIndex].classList.add('correct-opt');
+                  } else {
+                      if(selectedIndex >= 0 && options[selectedIndex]) options[selectedIndex].classList.add('wrong-opt');
+                      if(options[correctOptIndex]) options[correctOptIndex].classList.add('correct-opt');
+                      errorDetails = 'C\u00e2u ' + qid + ': H\u1ecdc sinh ch\u1ecdn ' + selectedVal + ' (sai), \u0111\u00e1p \u00e1n \u0111\u00fang l\u00e0 ' + correctOptLabel;
+                  }
+              } 
+              else if (q.type === 'gap_fill_text') {
+                  let allCorrect = true;
+                  let correctAnswersArr = [];
+                  q.blanks.forEach(b => {
+                      const input = document.getElementById('input-' + qid + '-' + b.blankId);
+                      const val = input ? input.value.trim().toLowerCase() : "";
+                      let isBlankCorrect = b.correctAnswers.some(ans => ans.toLowerCase() === val);
+                      if (isBlankCorrect) {
+                          if (input) {
+                              input.style.backgroundColor = '#eafaf1';
+                              input.style.borderColor = '#2ecc71';
+                          }
+                      } else {
+                          if (input) {
+                              input.style.backgroundColor = '#fdedec';
+                              input.style.borderColor = '#e74c3c';
+                          }
+                          allCorrect = false;
+                      }
+                      correctAnswersArr.push(b.correctAnswers.join(' / '));
+                  });
+                  isCorrect = allCorrect;
+                  if (!isCorrect) {
+                      errorDetails = 'C\u00e2u ' + qid + ': \u0110i\u1ec1n sai. \u0110\u00e1p \u00e1n \u0111\u00fang: ' + correctAnswersArr.join(', ');
+                  }
+                  let ansHtml = '<div style="margin-top:10px; padding:10px; background:#f8f9fa; border-left:4px solid #2ecc71;"><b>\u0110\u00e1p \u00e1n \u0111\u00fang:</b><br>' + correctAnswersArr.map((ans, i) => (correctAnswersArr.length > 1 ? 'T\u1eeb ' + (i+1) + ': ' : '') + '<b>' + ans + '</b>').join('<br>') + '</div>';
+                  expl.innerHTML = ansHtml + expl.innerHTML;
+              }
+              else if (q.type === 'reordering') {
+                  const drop = document.getElementById('drop-' + qid);
+                  const currentOrder = Array.from(drop.children).map(c => c.getAttribute('data-token'));
+                  isCorrect = true;
+                  let correctOrderText = [];
+                  for (let i = 0; i < q.correctOrder.length; i++) {
+                      const expectedToken = q.correctOrder[i];
+                      const expectedWord = q.words.find(w => w.tokenId === expectedToken).text;
+                      correctOrderText.push(expectedWord);
+                      if (currentOrder[i] !== expectedToken) {
+                          isCorrect = false;
+                      }
+                  }
+                  if (!isCorrect) {
+                      let ansDiv = document.createElement('div');
+                      ansDiv.style.marginTop = '10px';
+                      ansDiv.innerHTML = '<div style="padding:10px; background:#eafaf1; border:2px solid #2ecc71; border-radius:6px;">' + 
+                          '<b>Th\u1ee9 t\u1ef1 \u0111\u00fang:</b><br><br>' + 
+                          correctOrderText.map(t => '<span class="word-chip correct" style="pointer-events:none;">' + t + '</span>').join('') + 
+                          '</div>';
+                      drop.parentElement.appendChild(ansDiv);
+                      errorDetails = 'C\u00e2u ' + qid + ' sai. Th\u1ef1c t\u1ebf \u0111\u00fang: ' + correctOrderText.join(' ');
+                  }
+              }
+              else if (q.type === 'sentence_rewrite') {
+                  const el = document.getElementById('input-' + qid);
+                  const val = el ? el.value.trim() : "";
+                  const normVal = normalize(val.toLowerCase());
+                  const ansArr = q.correctAnswers;
+                  
+                  isCorrect = ansArr.some(ans => {
+                      let normAns = normalize(ans.toLowerCase());
+                      if (normAns === normVal) return true;
+                      
+                      let parts = normAns.split(' ');
+                      let exactMissingPart = '';
+                      if (parts.length >= 2 && normAns) {
+                          let prefix = normalize(parts[0].replace(/^(->|\?|\u2019)\s*/, '').toLowerCase());
+                          let suffix = normalize(parts[parts.length - 1].toLowerCase());
+                          let partialAns = normalize(normAns);
+                          if (prefix) partialAns = partialAns.replace(new RegExp('^' + prefix.replace(/[.*+?^${}()|[\]\\\\]/g, '\\\\$&') + '\\\\s*'), '').trim();
+                          if (suffix) partialAns = partialAns.replace(new RegExp('\\\\s*' + suffix.replace(/[.*+?^${}()|[\]\\\\]/g, '\\\\$&') + '$'), '').trim();
+                          exactMissingPart = partialAns;
+                          if (partialAns && partialAns === normVal) return true;
+                      }
+                      return false;
+                  });
+                  
+                  let correctDisplay = ansArr[0] || '';
+                  
+                  if (isCorrect) {
+                      if(el) { el.style.backgroundColor = '#eafaf1'; el.style.borderColor = '#2ecc71'; }
+                  } else {
+                      if(el) { el.style.backgroundColor = '#fdedec'; el.style.borderColor = '#e74c3c'; }
+                      errorDetails = 'C\u00e2u ' + qid + ' sai. \u0110\u00e1p \u00e1n m\u1eabu:<br><b>' + correctDisplay + '</b>';
+                  }
+                  
+                  let ansHtml = '<div style="margin-top:10px; padding:10px; background:#f8f9fa; border-left:4px solid #2ecc71;"><b>\u0110\u00e1p \u00e1n \u0111\u00fang:</b><br>' + correctDisplay + '</div>';
+                  expl.innerHTML = ansHtml + expl.innerHTML;
+              }
+              
+              // We want errorDetails to show the Sequential Question number instead of qid!
+              // Because we just renumbered them in the UI!
+              let globalIndex = quizData.findIndex(x => x.id.toString() === qid.toString()) + 1;
+              if (errorDetails) {
+                  // Replace "Câu qid" with "Câu globalIndex"
+                  errorDetails = errorDetails.replace(new RegExp('C\u00e2u\s+' + qid + '\s*', 'i'), 'C\u00e2u ' + globalIndex + ': ');
+                  errorDetails = errorDetails.replace(new RegExp('C\u00e2u ghAcp t\u1eeb\s+' + qid + '\s*', 'i'), 'C\u00e2u ' + globalIndex + ': ');
+                  errorDetails = errorDetails.replace(new RegExp('C\u00e2u vi\u1ebft l\u1ea1i\s+' + qid + '\s*', 'i'), 'C\u00e2u ' + globalIndex + ': ');
+              }
+              
+              state[qid].isCorrect = isCorrect;
+              state[qid].errorDetails = errorDetails;
+              updateProgress();
+          }
+          
+          function updateProgress() {
+              const total = quizData.length;
+              const checkedCount = Object.values(state).filter(s => s.checked).length;
+              const pct = (checkedCount / total) * 100;
+              document.getElementById('progressFill').style.width = pct + '%';
+          }
+          
+          function confirmSubmit() {
+              const total = quizData.length;
+              const checkedCount = Object.values(state).filter(s => s.checked).length;
+              if (checkedCount < total) {
+                  if (!confirm(`B\u1ea1n m\u1edbi ki\u1ec3m tra ${checkedCount}/${total} c\u00e2u. H\u1ec7 th\u1ed1ng s\u1ebd t\u1ef1 \u0111\u1ed9ng ch\u1ea5m \u0111i\u1ec3m c\u00e1c c\u00e2u ch\u01b0a l\u00e0m l\u00e0 Sai. B\u1ea1n c\u00f3 ch\u1eafc ch\u1eafn mu\u1ed1n n\u1ed9p b\u00e0i?`)) {
+                      return;
+                  }
+              }
+              quizData.forEach(q => {
+                  if (!state[q.id].checked) {
+                      checkQuestion(q.id, true);
+                  }
+              });
+
+              submitTest();
+          }
+          
+          function submitTest() {
+              const studentName = document.getElementById('studentName').value.trim();
+              const total = quizData.length;
+              const correctCount = Object.values(state).filter(s => s.isCorrect).length;
+              const score = (correctCount / total) * 10;
+              
+              const errors = Object.values(state)
+                  .filter(s => s.checked && !s.isCorrect && s.errorDetails)
+                  .map(s => s.errorDetails);
+              const errorReport = errors.length > 0 ? errors.join('\n') : "Kh\u00f4ng c\u00f3 l\u1ed7i sai";
+              
+              document.getElementById('testScreen').classList.remove('active');
+              document.getElementById('resultScreen').classList.add('active');
+              document.querySelectorAll('input, .option, .word-chip, .check-btn').forEach(el => { el.disabled = true; el.style.pointerEvents = 'none'; el.style.opacity = '0.7'; });
+              
+              document.getElementById('scoreDisplay').innerText = score.toFixed(2) + ' / 10';
+              
+              let feedback = '';
+              if (score >= 9) feedback = 'Xu\u1ea5t s\u1eafc! B\u1ea1n n\u1eafm b\u00e0i r\u1ea5t v\u1eefng.';
+              else if (score >= 7) feedback = 'Kh\u00e1 t\u1ed1t! H\u00e3y c\u1ed1 g\u1eafng h\u01a1n m\u1ed9t ch\u00fat nh\u00e9.';
+              else if (score >= 5) feedback = '\u0110\u1ea1t y\u00eaa c\u1ea7u. B\u1ea1n c\u1ea7n \u00f4n t\u1eadp th\u00eam.';
+              else feedback = 'Ch\u01b0a \u0111\u1ea1t. B\u1ea1n c\u1ea7n xem l\u1ea1i k\u1ef9 b\u00e0i h\u1ecdc!';
+              document.getElementById('feedbackText').innerText = feedback;
+              
+              const detailsDiv = document.getElementById('resultDetails');
+              if (errors.length > 0) {
+                  detailsDiv.innerHTML = '<h3>Chi ti\u1ebft c\u00e1c c\u00e2u sai:</h3>' + 
+                      errors.map(e => '<div class="error-item">' + e + '</div>').join('');
+              } else {
+                  detailsDiv.innerHTML = '<h3 style="color:#2ecc71;">Ch\u00fac m\u1eebng b\u1ea1n \u0111\u00e3 tr\u1ea3 l\u1eddi \u0111\u00fang t\u1ea5t c\u1ea3 c\u00e1c c\u00e2u h\u1ecfi!</h3>';
+              }
+              
+              const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfZCAK2lpNE8O8Ieqwc3SI1ubr6HZDvGZR91AsSpUk8kEBqaA/formResponse';
+              const formData = new FormData();
+              formData.append('entry.1861648410', studentName);
+              formData.append('entry.1691800437', score.toFixed(2));
+              const plainErrorReport = errorReport.replace(/<[^>]*>?/gm, '');
+              formData.append('entry.639295732', plainErrorReport);
+              formData.append('entry.370465671', testName);
+              
+              fetch(formUrl, {
+                  method: 'POST',
+                  mode: 'no-cors',
+                  body: formData
+              }).then(() => {
+                  window.scrollTo(0, 0);
+              }).catch(err => {
+                  alert('C\u00f3 l\u1ed7i khi g\u1eedi k\u1ebft qu\u1ea3. Vui l\u00f2ng th\u1eed l\u1ea1i!');
+                  console.error(err);
+              });
+          }
+          
+          
+          function startTest() {
+              const nameInput = document.getElementById('studentName').value.trim();
+              if (!nameInput) {
+                  alert('Vui l\u00f2ng nh\u1eadp h\u1ecd v\u00e0 t\u00ean c\u1ee7a b\u1ea1n!');
+                  document.getElementById('studentName').focus();
+                  return;
+              }
+              document.getElementById('startScreen').classList.remove('active');
+              document.getElementById('testScreen').classList.add('active');
+              window.scrollTo(0, 0);
+          }
+
+          init();
+
+
+
+    </script>
+    </body>
+    </html>
+    
